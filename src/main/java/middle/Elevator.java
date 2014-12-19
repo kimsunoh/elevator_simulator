@@ -56,14 +56,18 @@ public class Elevator {
 
 
     public static Elevator getInstance() {
-        if (instance == null) {
+        if (instanceIsEmpty()) {
             synchronized (InputBuffer.class) {
-                if (instance == null) {
+                if (instanceIsEmpty()) {
                     instance = new Elevator();
                 }
             }
         }
         return instance;
+    }
+
+    private static boolean instanceIsEmpty() {
+        return instance == null;
     }
 
     public void setCurrentFloor(int floor) {
@@ -90,11 +94,11 @@ public class Elevator {
                     //가까운 ?????
                    // currentMoveState = MoveState.UP;
                 }
-                if (targetFloors.get(0) > currentFloor) {
+                if (targetFloorHighToCrrentFloor()) {
                     currentMoveState = MoveState.UP;
-                } else if (targetFloors.get(0) < currentFloor) {
+                } else if (targetFloorRowToCurrentFloor()) {
                     currentMoveState = MoveState.DOWN;
-                } else if (targetFloors.get(0) == currentFloor){
+                } else if (targetFloorsEqualCurrentFloor()){
                     if (currentServiceState != ServiceState.PAUSE) {
                         currentServiceState = ServiceState.PAUSE;
                         //currentMoveState = MoveState.NO_MOVE;
@@ -119,10 +123,26 @@ public class Elevator {
                     }
                 }
             } else {
-                currentMoveState = MoveState.NO_MOVE;
-                currentServiceState = ServiceState.PAUSE;
-                currentDoorState = DoorState.CLOSE;
+                stillState();
             }
+        }
+
+        private void stillState() {
+            currentMoveState = MoveState.NO_MOVE;
+            currentServiceState = ServiceState.PAUSE;
+            currentDoorState = DoorState.CLOSE;
+        }
+
+        private boolean targetFloorsEqualCurrentFloor() {
+            return targetFloors.get(0) == currentFloor;
+        }
+
+        private boolean targetFloorRowToCurrentFloor() {
+            return targetFloors.get(0) < currentFloor;
+        }
+
+        private boolean targetFloorHighToCrrentFloor() {
+            return targetFloors.get(0) > currentFloor;
         }
 
         @Override
