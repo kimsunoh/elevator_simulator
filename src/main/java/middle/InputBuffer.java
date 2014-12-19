@@ -19,14 +19,18 @@ public class InputBuffer {
     }
 
     public static InputBuffer getInstance() {
-        if (instance == null) {
+        if (instanceIsEmpty()) {
             synchronized (InputBuffer.class) {
-                if (instance == null) {
+                if (instanceIsEmpty()) {
                     instance = new InputBuffer();
                 }
             }
         }
         return instance;
+    }
+
+    private static boolean instanceIsEmpty() {
+        return instance == null;
     }
 
     public boolean selectUpDown(Integer selectionFloor, String upDown) {
